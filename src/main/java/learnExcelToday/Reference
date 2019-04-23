@@ -1,0 +1,79 @@
+[11:54 AM, 3/12/2019] Madhavan Tstlf: public class Create_Lead extends Base_Configuaration {
+	
+	@BeforeTest
+	public void setFileName()
+	{
+		fileName="createLead";
+	}
+	@Test(dataProvider="inputdata")
+	public void create_lead(String cmpny,String fname,String laname) throws InterruptedException
+	{
+	  	
+		driver.findElementByLinkText("CRM/SFA").click();
+		driver.findElementByLinkText("Create Lead").click();
+		driver.findElementById("createLeadForm_companyName").sendKeys(cmpny);
+		driver.findElementById("createLeadForm_firstName").sendKeys(fname);
+		driver.findElementById("createLeadForm_lastName").sendKeys(laname);
+		driver.findElementByName("submitButton").click();
+		String title=driver.getTitle();
+		System.out.println("Page title is "+title);
+		driver.findElementByLinkText("Edit").click();
+		//Drop Down
+		WebElement industry = driver.findElementById("updateLeadForm_industryEnumId");
+		Select dd1=new Select(industry);
+		dd1.selectByVisibleText("Computer Software");//Select by visible text
+		WebElement ownership = driver.findElementById("updateLeadForm_ownershipEnumId");
+		Select dd2=new Select(ownership);
+		List<WebElement> dropDown = dd2.getOptions();
+		dd2.selectByIndex(dropDown.size()-1);//Select by index
+		WebElement submitButton = driver.findElementByClassName("smallSubmit");
+		WebElement currency = driver.findElementById("updateLeadForm_currencyUomId");
+		Select dd3=new Select(currency);
+		dd3.selectByValue("INR");//select by value
+		submitButton.click();
+		
+}
+}
+[11:55 AM, 3/12/2019] Madhavan Tstlf: public class Base_Configuaration {
+  public ChromeDriver driver;
+  ExtentReports extent;
+  public String fileName;
+    @BeforeMethod @Parameters({"url","uname","pswd"})
+	public void login_Confiquaration(String url,String uname,String pswd)
+	{
+		System.setProperty("webdriver.chrome.driver", "./drivers/Chromedriver/chromedriver.exe");
+		 driver = new ChromeDriver();
+		driver.get(url);
+		WebElement userName=driver.findElementById("username");
+	    userName.sendKeys(uname);
+		driver.findElementById("password").sendKeys(pswd);
+		driver.findElementByClassName("decorativeSubmit").click();
+	}
+	
+	@AfterMethod
+	public void close()
+	{
+		driver.close();
+	}
+	
+	@DataProvider(name="inputdata")
+	public String[][] getdata() throws IOException
+	
+	
+	{
+		return Read_Excel.get_Read_ExcelData(fileName);
+		
+		/*String[][] create_Lead_Data=new String [2][3];
+		create_Lead_Data[0][0]="Hexacorp";
+		create_Lead_Data[0][1]="Sai";
+		create_Lead_Data[0][2]="krishan";
+		create_Lead_Data[1][0]="Hexacorp";
+		create_Lead_Data[1][1]="Vikrem";
+		create_Lead_Data[1][2]="vehda";
+		return create_Lead_Data;*/
+		
+	}
+	
+	    
+	    
+}
